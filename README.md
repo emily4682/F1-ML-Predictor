@@ -1,6 +1,10 @@
 # F1 Race Predictor using ML (Linear Regression)
  *Machine Learning Program based in Python to predict results for F1 Races.*
 
+To-Do:
+- 
+Add invalid input checking 
+
  Description
  -
  
