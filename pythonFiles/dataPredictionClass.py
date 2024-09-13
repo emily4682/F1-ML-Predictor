@@ -66,7 +66,7 @@ class predictor:
                         break
             
             # Create array with data to be used in model
-            data.append([season.strip(), startingPosition.strip(), constructorPoints.strip(), driverPoints.strip(), weather, constructorID.strip(), driverID.strip(), driverWins.strip(), driverPodiums.strip(), driverStandingPosition.strip(), constructorStandings.strip(), constructorWins.strip(), constructorPodiums.strip(), age.strip()])
+            data.append([int(season.strip()), int(startingPosition.strip()), int(constructorPoints.strip()), int(driverPoints.strip()), int(weather), int(constructorID.strip()), int(driverID.strip()), int(driverWins.strip()), int(driverPodiums.strip()), int(driverStandingPosition.strip()), int(constructorStandings.strip()), int(constructorWins.strip()), int(constructorPodiums.strip()), int(age.strip())])
         
         #Create & train model with final.csv
         
@@ -81,21 +81,21 @@ class predictor:
         pr = PolynomialFeatures(degree=2, include_bias=False)
         X_poly = pr.fit_transform(X) 
 
-
         # Build linear regression model
         lr_model = LinearRegression()
         lr_model.fit(X_poly, Y)
  
         # Predict winner for 1st driver with model
         poly = pr.fit_transform([data[0]])
-        prob = lr_model.predict(np.array(poly, dtype=np.int64))
-        winner = (data[0])[5]
+        prob = lr_model.predict(poly)
+        winner = (data[0])[6]
+
         i = 1
         # For all other drivers, calculate win probability
         while i < len(data):
             poly2 = pr.fit_transform([data[i]])
-            driver2 = lr_model.predict(np.array(poly2, dtype=np.int64))
-            driver2ID = (data[i])[5]
+            driver2 = lr_model.predict(poly2)
+            driver2ID = (data[i])[6]
 
             indexProb1 = str(prob).index("]")
             tempProb1 = str(prob)[1:indexProb1]
@@ -109,14 +109,15 @@ class predictor:
                 prob = driver2
             
             i = i + 1
-        
+
         with open('Databases/drivers.csv', 'r', encoding="utf-8") as csvfile:
-                        
                 # Get winner name
                 reader = csv.reader(csvfile)
                 for row in reader:
-                    if row[0] == winner:
-                        winner = row[4] + " " + row[5]
+                    if row[0] != 'driverId':
+                        if int(row[0]) == int(winner):
+                            winner = row[4] + " " + row[5]
+                            break
 
         # Calculate probability as percentage
         prob = prob*100
