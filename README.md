@@ -43,41 +43,64 @@ This data allowed the model to get a feel for the driver's ability, the ability 
 - **dataPredictionClass.py**
     - Shows how the model makes a prediciton from the user input & determines the most probable outcome
 
- I used a Linear regression model for this project that had a RMSE value of 0.1741 (to 4 d.p). Meaning the model had around a 17% error rate.
+ I used a Polynomial regression model for this project that had a RMSE value of 0.1644 (to 4 d.p). Meaning the model had an accuracy of around 84% (or an error rate of 16%). A polynomial regression model was 0.97% more accurate than a linear model.
 
   To get this RMSE value, the data from 1950-2024 (up to 2024 British GP) was tested using a train/test model. I trained the model with 70% of the data and then tested with the remaining 30%. 
 
  ````python
 #ML Model for testing & training
-df = pd.read_csv('newMethods/FinalData/final.csv')
 
-X = df[['season','startingPosition','constructorPoints','driverPoints','constructorID','driverID','driverPrevWins','driverPrevPodiums','driverStandingsPos','constructorStandingsPos', 'constructorWins' , 'constructorPodiums' , 'age']]
+df = pd.read_csv('PythonFiles/FinalData/final.csv')
+df.head()
+df.describe()
+
+X = df[['season','startingPosition','constructorPoints','driverPoints', 'raining','constructorID','driverID','driverPrevWins','driverPrevPodiums','driverStandingsPos','constructorStandingsPos', 'constructorWins' , 'constructorPodiums' , 'age']]
 Y = df['won']
 
 pr = PolynomialFeatures(degree=2, include_bias=False)
-X_poly = pr.fit_transform(X)
-X_train, X_test, y_train, y_test = train_test_split(X_poly, Y, test_size=0.3, random_state=39)
-model = LinearRegression()
-model.fit(X_train, y_train)
-y_pred = model.predict(X_test)
-RMSE = np.sqrt(mean_squared_error(y_test, y_pred))
-print("RMSE = " + RMSE)
+X_poly = pr.fit_transform(X) 
 
->> RMSE = 0.17410122636011938
+#Split data into train & test
+X_train, X_test, y_train, y_test = train_test_split(X_poly, Y, test_size=0.3, random_state=42)
+
+# Built linear regression model with training data
+lr_model = LinearRegression()
+lr_model.fit(X_train, y_train)
+
+# Predict test data
+y_pred= lr_model.predict(X_test)
+
+# Calculate RMSE value to test accuracy
+from sklearn.metrics import mean_squared_error
+RMSE = np.sqrt(mean_squared_error(y_test, y_pred))
+
+print("RMSE: " + str(RMSE))
+
+>> RMSE = 0.16439617852664945
 
 ````
 ````python  
 
 # ML Model for predicting based on user input
-df = pd.read_csv('newMethods/FinalData/final.csv')
-X=df[['season','startingPosition','constructorPoints','driverPoints','constructorID','driverID','driverPrevWins','driverPrevPodiums','driverStandingsPos','constructorStandingsPos', 'constructorWins' , 'constructorPodiums' , 'age']]
-Y = df['won']
-lr_2 = LinearRegression()
-lr_2.fit(X, Y)
 
-# data is the array collected from the user input
-prob = lr_2.predict(np.array([data[0]], dtype=np.int64))
-winner = (data[0])[5] #Getting the DriverID
+df = pd.read_csv('PythonFiles/FinalData/final.csv')
+df.head()
+df.describe()
+
+X = df[['season','startingPosition','constructorPoints','driverPoints', 'raining','constructorID','driverID','driverPrevWins','driverPrevPodiums','driverStandingsPos','constructorStandingsPos', 'constructorWins' , 'constructorPodiums' , 'age']]
+Y = df['won']
+
+pr = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = pr.fit_transform(X) 
+
+# Build linear regression model
+lr_model = LinearRegression()
+lr_model.fit(X_poly, Y)
+ 
+# Predict winner for 1st driver with model
+poly = pr.fit_transform([data[0]])
+prob = lr_model.predict(np.array(poly, dtype=np.int64))
+winner = (data[0])[5] #Get DriverID
 
 # The model will iterativley predict for each driver and find the driver with the highest probability
 ````

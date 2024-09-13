@@ -15,7 +15,7 @@ def calcConstructors():
     numConstructorsEntry.destroy()
     
     i = 1
-
+    # For each constructor, collect required data
     while i <= int(numConstructors):
         var = tkinter.IntVar()
 
@@ -51,6 +51,7 @@ def calcConstructors():
         submit2.pack()
         submit2.wait_variable(var)
 
+        # Store data for use by predictor
         const_entries.append([name.get(), wins.get(), podiums.get(), points.get(), pos.get()])
     
         constNum.destroy()
@@ -75,6 +76,7 @@ def calcDrivers():
     numDrivers = numDriversEntry.get()
     numDriversEntry.destroy()
     
+    # For each driver in race, get user to input required data for prediction
     i = 1
     while i <= int(numDrivers):
         var = tkinter.IntVar()
@@ -126,6 +128,7 @@ def calcDrivers():
         submit2.pack()
         submit2.wait_variable(var)
 
+        # Store this data in driver entries to be used with predictor
         driver_entries.append([name.get(), startingPos.get(),  wins.get(), podiums.get(), points.get(), pos.get(), age.get(), constructor.get()])
     
         constructorTitle.destroy()
@@ -151,15 +154,21 @@ def calcDrivers():
     predict.pack()
 
 def predictWinner():
+    # Get predictor object 
     pred = predictor()
+
+    # Add user collected data & predict
     data = pred.predictWinner(driver_entries, const_entries, season, weather)
     winner = data[0]
     prob = data[1]
 
+    # Return winner to user
     winner = Label(main, text="The Predicted Winner of this race is: " + winner)
     probability = Label(main, text="With a probability of : " + prob + "%")
     winner.pack()
     probability.pack()
+
+# -------- Main UI ----------
 
 main = tkinter.Tk()
 main.geometry("750x550")
@@ -170,6 +179,7 @@ l.pack()
 
 main.title('F1 Race Predictor')
 
+# Get number of constructors
 numConstructorsTitle = Label(main, text="Please enter the number of constructors in this race")
 numConstructorsTitle.pack()
 numConstructorsEntry = Entry(main)
@@ -181,6 +191,7 @@ complete = Button(main, text="Continue", command=lambda: var.set(1))
 complete.wait_variable(var)
 complete.destroy()
 
+# Get season
 var = tkinter.IntVar()
 seasonTitle = Label(main, text="Please enter the season (year)")
 seasonTitle.pack()
@@ -194,6 +205,7 @@ complete.destroy()
 year.destroy()
 seasonTitle.destroy()
 
+# Get Weather
 var = tkinter.IntVar()
 weatherTitle = Label(main, text="Please enter if it rained or not (Y/N)")
 weatherTitle.pack()
@@ -210,6 +222,7 @@ complete.destroy()
 weatherVal.destroy()
 weatherTitle.destroy()
 
+# Get number of drivers
 l = Label(main, text="Please enter the number of drivers in this race")
 l.pack()
 numDriversEntry = Entry(main)
@@ -217,6 +230,7 @@ numDriversEntry.pack()
 submit = Button(main, text="Submit", command=calcDrivers)
 submit.pack()
 
+# Predict Winner
 var = tkinter.IntVar()
 predict = tkinter.Button(main, text="Predict", width="50", command=predictWinner)
 
