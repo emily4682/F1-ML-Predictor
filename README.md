@@ -134,7 +134,7 @@ Along the same line, I could also add a check to see if drivers are more likely 
 
 **For Example**: Due to the close walls at Monaco and other narrow street circuits, there is generally a higher probability of a driver crashing compared to a track circuit that is built with run off areas.
 
-*Refrences*
+*References*
 -
 
  Inspiration from this project: https://towardsdatascience.com/formula-1-race-predictor-5d4bfae887da
